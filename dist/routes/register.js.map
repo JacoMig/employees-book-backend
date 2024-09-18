@@ -1,0 +1,1 @@
+{"version":3,"file":"register.js","sourceRoot":"","sources":["../../src/routes/register.ts"],"names":[],"mappings":"AAEA,MAAM,cAAc,GAAsB,KAAK,EAAE,MAAM,EAAE,EAAE;IACvD,MAAM,CAAC,IAAI,CAAC,WAAW,EAAE,KAAK,EAAE,OAAO,EAAE,EAAE;QACvC,OAAO,EAAC,UAAU,EAAE,KAAK,EAAC,CAAA;IAC9B,CAAC,CAAC,CAAA;AACN,CAAC,CAAA;AAED,eAAe,cAAc,CAAA"}

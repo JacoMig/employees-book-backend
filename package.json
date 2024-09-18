@@ -1,0 +1,29 @@
+{
+  "name": "node_nosql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx tsc -w & nodemon --env-file=.env ./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fastify/mongodb": "^9.0.0",
+    "@sinclair/typebox": "^0.33.11",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "fastify": "^5.0.0",
+    "mongodb": "^6.9.0",
+    "mongoose": "^8.6.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^22.5.5",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.6.2"
+  }
+}
