@@ -1,10 +1,13 @@
+import { HydratedDocument } from "mongoose"
+import { IUser } from "../userSchema"
+
 export type LoginRequestDto = {
     usernameOrEmail: string
     password: string
 }
 
 export type LoginResponseDto = {
-    loggedIn: boolean
+    token: string
 }
 
 export type RegisterRequestDto = {
@@ -13,3 +16,11 @@ export type RegisterRequestDto = {
     password: string
 }
 
+export type CreateUserRequestDto = {
+    username: string,
+    email: string,
+    password: string
+}
+
+
+export type UserDocument = HydratedDocument<IUser>

@@ -34,3 +34,10 @@ export class InternalServerError extends CustomError {
     super('INTERNAL_SERVER_ERROR', 500, message);
   }
 }
+
+
+export class BadRequestError extends CustomError {
+  constructor(message: string) {
+    super('BAD_REQUEST', 400, message);
+  }
+}

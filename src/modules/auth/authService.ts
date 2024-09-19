@@ -1,40 +1,17 @@
 import {
+    BadRequestError,
     ForbiddenError,
     InternalServerError,
     NotFoundError,
 } from '../../common/errors'
 import { IAuthRepository } from './authRepository'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const authService = (AuthRepository: IAuthRepository) => {
     
-    const register = async (
-        username: string,
-        email: string,
-        password: string
-    ) => {
-        if (!email || !password)
-            throw new ForbiddenError('email or password missing')
-
-        let user = await AuthRepository.findOne(email)
-        
-        if (user.email) throw new ForbiddenError('user already exists')
-
-        try {
-            await AuthRepository.create(
-                username,
-                email,
-                password
-            )
-        } catch (e) {
-            console.log(e)
-            throw new InternalServerError(e as string)
-        }
-
-        console.log('Send Successfully!!!')
-    }
-
-    const login = async (usernameOrEmail: string, password: string) => {
+   
+   const login = async (usernameOrEmail: string, password: string) => {
         if (!usernameOrEmail || !password) {
             throw new ForbiddenError('username or password missing')
         }
@@ -63,13 +40,16 @@ const authService = (AuthRepository: IAuthRepository) => {
             throw new ForbiddenError(e as string)
         }
 
+        const token = jwt.sign({
+            data: user
+          }, user.email, { expiresIn: 60 * 60 });
+
         return {
-            loggedIn: true,
+            token
         }
     }
 
     return {
-        register,
         login,
     }
 }

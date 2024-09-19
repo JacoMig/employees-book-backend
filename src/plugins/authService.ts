@@ -4,8 +4,7 @@ import authRepository from '../modules/auth/authRepository'
 import { createAuthService } from '../modules/auth/authService'
 
 export interface IAuthService {
-    register: (username: string, email: string, password: string) => void
-    login: (usernameOrEmail: string, password: string) => Promise<{loggedIn: boolean}>
+    login: (usernameOrEmail: string, password: string) => Promise<{token: string}>
 }
 
 declare module 'fastify' {
