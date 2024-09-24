@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:local": "npx tsc -w & nodemon --env-file=.env ./dist/index.js",
     "build": "tsc",
-    "start": "node --env-file=.env ./dist/index.js"
+    "start": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
