@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import { CreateUserRequestDto, CreateUserResponseDto, GetUserQueryString, UserDocument } from "./dtos";
+import { CreateUserRequestDto, CreateUserResponseDto, GetUserQueryString, UpdateUserParams, UpdateUserRequestDto, UserDocument } from "./dtos";
 import { UserType } from "../userSchema";
 
 const userRoutes:FastifyPluginAsync = async (server) => {
@@ -26,10 +26,16 @@ const userRoutes:FastifyPluginAsync = async (server) => {
         }
     )
 
-    server.patch(
+    server.patch<{Body: UpdateUserRequestDto,  Params: UpdateUserParams}>(
         '/:id', 
+        {
+            schema: {
+                body: UpdateUserRequestDto,
+                params: {id: UpdateUserParams}
+            }
+        },
         async (request) => {
-
+            
         }
     )
 

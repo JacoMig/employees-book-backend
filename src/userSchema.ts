@@ -13,6 +13,8 @@ export interface IUser {
     password: string
     jobTitle: string
     userGroup: UserGroup
+    firstName: string
+    lastName: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -53,6 +55,12 @@ const userSchema = new mongoose.Schema<IUser>({
         enum : ['superadmin','admin', 'customer'],
         default: 'customer',
         required: true
+    },
+    firstName: {
+        type: String
+    },
+    lastName: {
+        type: String
     }
 })
 

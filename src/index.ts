@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
-import fastify, { FastifyPluginAsync } from 'fastify'
-import fp from 'fastify-plugin'
+import fastify from 'fastify'
+
+
+const HOST = process.env.HOST || '0.0.0.0'
+
+
 export const app = fastify({
     logger: true,
 })
@@ -27,7 +31,7 @@ app.register(import('@fastify/jwt'), {
   })
 
 // Run the server!
-app.listen({ port: 3000 }, (err) => {
+app.listen({host: HOST, port: 3000 }, (err) => {
     if (err) {
         app.log.error(err)
         mongoose.connection.close()
