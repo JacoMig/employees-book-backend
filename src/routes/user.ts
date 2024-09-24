@@ -31,11 +31,11 @@ const userRoutes:FastifyPluginAsync = async (server) => {
         {
             schema: {
                 body: UpdateUserRequestDto,
-                params: {id: UpdateUserParams}
+                params: UpdateUserParams
             }
         },
         async (request) => {
-            
+
         }
     )
 
