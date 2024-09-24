@@ -5,7 +5,9 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc -w & nodemon --env-file=.env ./dist/index.js"
+    "start:local": "npx tsc -w & nodemon --env-file=.env ./dist/index.js",
+    "build": "npx tsc",
+    "start": "node --env-file=.env ./dist/index.js"
   },
   "keywords": [],
   "author": "",
