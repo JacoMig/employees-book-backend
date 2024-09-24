@@ -41,7 +41,7 @@ export type GetUserQueryString = Static<typeof GetUserQueryString>
 
 
 export const UpdateUserRequestDto = Type.Object({
-    username: Type.RegExp(/^[a-zA-Z0-9-_.]+$/),
+    username: Type.String(),
     email: Type.String({format: 'email'}),
     jobTitle: Type.String({}),
     firstName: Type.String({}),
