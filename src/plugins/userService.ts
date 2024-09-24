@@ -1,17 +1,18 @@
 import { FastifyPluginAsync } from 'fastify'
 import userRepository, { IUserRepository } from '../modules/user/userRepository'
-import { createUserService } from '../modules/user/userService'
+import { createUserService, ListCommand } from '../modules/user/userService'
 import fp from 'fastify-plugin'
 import { UserDocument } from '../routes/dtos'
-import { UserType } from '../userSchema'
+import { UserGroup, UserType } from '../userSchema'
 
 export interface IUserService {
-    list: () => Promise<UserDocument[] | null>,
+    list: (command:ListCommand) => Promise<Partial<UserDocument>[]>,
     create: (
         username: string,
         email: string,
-        password: string
-    ) => Promise<UserType | null>
+        password: string,
+        userGroup: UserGroup
+    ) => Promise<Partial<UserDocument> | null>
     delete: (
         userId: string
     ) => Promise<void>

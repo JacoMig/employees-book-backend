@@ -1,9 +1,9 @@
-import {  UserModel, UserType } from '../../userSchema'
+import {  IUser, UserModel, UserType } from '../../userSchema'
 import { UserDocument } from '../../routes/dtos'
 
 export interface IAuthRepository {
     findOne: (usernameOrEmail: string) => Promise<UserDocument | null>
-    create: (username: string, email: string, password: string) => Promise<UserType>
+    
 }
 
 function authRepository(): IAuthRepository {
@@ -16,21 +16,10 @@ function authRepository(): IAuthRepository {
         
     }
 
-    const create = async (
-        username: string,
-        email: string,
-        password: string
-    ) => {
-        return await new UserModel({
-            username,
-            email,
-            password,
-        }).save()
-    }
-
+ 
     return {
         findOne,
-        create,
+ 
     }
 }
 

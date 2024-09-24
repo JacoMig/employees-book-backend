@@ -1,10 +1,18 @@
 import mongoose, { InferSchemaType, model } from 'mongoose'
 import bcrypt from 'bcrypt'
 
+export type UserGroup = 
+    'superadmin' |
+    'admin' |
+    'customer'
+
+
 export interface IUser {
     username: string
     email: string
     password: string
+    jobTitle: string
+    userGroup: UserGroup
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -33,10 +41,19 @@ const userSchema = new mongoose.Schema<IUser>({
             validator: function (v) {
                 return /^(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(v)
             },
-            message: (props) =>
-                `${props.value} must have at least one special char, capital letters and numbers`,
+            message: () =>
+                `Password must have at least one special char, capital letters and numbers`,
         },
     },
+    jobTitle: {
+        type: String
+    },
+    userGroup: {
+        type: String,
+        enum : ['superadmin','admin', 'customer'],
+        default: 'customer',
+        required: true
+    }
 })
 
 userSchema.pre('save', async function (next) {

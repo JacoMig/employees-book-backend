@@ -1,17 +1,27 @@
 import { BadRequestError, ForbiddenError, InternalServerError } from "../../common/errors"
-import { UserType } from "../../userSchema"
+import { UserDocument } from "../../routes/dtos"
+import { IUser, UserGroup, UserType } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
+
+export type ListCommand = {
+    username?: string
+}
 
 const userService = (UserRepository:IUserRepository) => {
     
-    const list = async () => {
-        return UserRepository.list() 
+    const list = async (command: ListCommand) => {
+        const filter = {
+            username: command.username
+        }
+        const users = await UserRepository.list(filter) 
+        return mapMany(users)
     }
 
     const create = async (
         username: string,
         email: string,
-        password: string
+        password: string,
+        userGroup: UserGroup
     ) => {
         if (!email || !password)
             throw new BadRequestError('email or password missing')
@@ -20,19 +30,20 @@ const userService = (UserRepository:IUserRepository) => {
         
         if (user) throw new ForbiddenError('user already exists')
         
-        let newUser:UserType    
+        let newUser:Partial<UserDocument> | null = null   
         try {
             newUser = await UserRepository.create(
                 username,
                 email,
-                password
+                password,
+                userGroup
             )
         } catch (e) {
             throw new InternalServerError(e as string)
         }
 
         
-        return newUser
+        return mapOne(newUser)
     }
 
     const remove = async (id:string) => {
@@ -48,6 +59,20 @@ const userService = (UserRepository:IUserRepository) => {
         create,
         delete: remove
     }
+}
+
+
+const mapOne = (user:Partial<UserDocument>) => {
+    return {
+        username: user.username,
+        userGroup: user.userGroup,
+        email: user.email,
+        id: user.id,
+    }
+}
+
+const mapMany = (users:Partial<UserDocument>[]) => {
+    return users.map(u => mapOne(u))
 }
 
 export const createUserService = (UserRepository:IUserRepository) => {

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-import fastify from 'fastify'
-
+import fastify, { FastifyPluginAsync } from 'fastify'
+import fp from 'fastify-plugin'
 export const app = fastify({
     logger: true,
 })
@@ -21,6 +21,10 @@ app.register(async () => {
 app.register(import('./plugins/authService'))
 app.register(import('./plugins/userService'))
 app.register(import('./routes'))
+app.register(import('@fastify/jwt'), {
+    secret: 'supersecret',
+    sign: { algorithm: 'HS256' }
+  })
 
 // Run the server!
 app.listen({ port: 3000 }, (err) => {

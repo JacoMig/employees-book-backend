@@ -1,27 +1,45 @@
 import { FastifyPluginAsync } from "fastify";
-import { CreateUserRequestDto } from "./dtos";
+import { CreateUserRequestDto, CreateUserResponseDto, GetUserQueryString, UserDocument } from "./dtos";
+import { UserType } from "../userSchema";
 
 const userRoutes:FastifyPluginAsync = async (server) => {
     
-    server.get(
+    server.get<{ Querystring: GetUserQueryString }>(
         '/',
+        {
+            schema: {
+              querystring: GetUserQueryString,
+            },
+        },
         async (request) => {
-            return await server.userService.list()
+            return await server.userService.list(request.query)
         }
     )
     
-    server.post<{ Body: CreateUserRequestDto; Reply: any }>(
+    server.post<{ Body: CreateUserRequestDto; Reply: CreateUserResponseDto }>(
         '/',
         async (request,response) => {
-            const {username, email, password} = request.body
+            const {username, email, password, userGroup} = request.body
             response.status(201).send(
-                await server.userService.create(username, email, password)
+                await server.userService.create(username, email, password, userGroup)
             )
+        }
+    )
+
+    server.patch(
+        '/:id', 
+        async (request) => {
+
         }
     )
 
     server.delete<{ Params: {id: string} }>(
         '/:id',
+        {
+        preHandler: server.auth([
+            server.authService.authenticate(['superadmin'])
+        ])
+        },
         async (request, response) => {
             const {id} = request.params
             await server.userService.delete(id)

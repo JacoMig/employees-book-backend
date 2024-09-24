@@ -1,9 +1,17 @@
 import { FastifyPluginAsync } from "fastify";
-import { LoginRequestDto, LoginResponseDto } from "./dtos";
+import { ILoginRequestDto, LoginResponseDto } from "./dtos";
 
 const authRoutes:FastifyPluginAsync = async (server) => {
-    server.post<{ Body: LoginRequestDto; Reply: LoginResponseDto }>(
+    server.post<{ Body: ILoginRequestDto; Reply: LoginResponseDto }>(
         '/login',
+        {
+            schema: {
+              body: ILoginRequestDto,
+              /* response: {
+                200: User
+              }, */
+            },
+        },
         async (request) => {
             const {usernameOrEmail, password} = request.body
         
