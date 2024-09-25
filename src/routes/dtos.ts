@@ -1,57 +1,77 @@
-import { HydratedDocument } from "mongoose"
-import { IUser, UserGroup } from "../userSchema"
-import { Static, Type } from "@sinclair/typebox";
+import { HydratedDocument } from 'mongoose'
+import { IUser, UserGroup } from '../userSchema'
+import { Static, Type } from '@sinclair/typebox'
 
 export const ILoginRequestDto = Type.Object({
     usernameOrEmail: Type.String(),
     password: Type.String(),
-  });
-  
-export type ILoginRequestDto = Static<typeof ILoginRequestDto>;
-  
+})
+
+export type ILoginRequestDto = Static<typeof ILoginRequestDto>
 
 export type LoginResponseDto = {
     token: string
 }
 
-export type RegisterRequestDto = {
-    username: string,
-    email: string,
-    password: string
-}
+export const RegisterRequestDto = Type.Object({
+    username: Type.String({minLength:1, maxLength: 20}),
+    email: Type.String({format: 'email'})
+})
 
-export type CreateUserRequestDto = {
-    username: string,
-    email: string,
-    password: string
-    userGroup: UserGroup
-}
+export type RegisterRequestDto = Static<typeof RegisterRequestDto>
 
+export const CreateUserRequestDto = Type.Object({
+    username: Type.String({minLength: 1, maxLength: 20}),
+    email: Type.String({ format: 'email' }),
+    password: Type.String({ minLength: 8, maxLength: 16 }),
+    userGroup: Type.Optional(Type.Union([
+        Type.Literal('superadmin'),
+        Type.Literal('admin'),
+        Type.Literal('customer'),
+    ])),
+   
+})
+
+export type CreateUserRequestDto = Static<typeof CreateUserRequestDto>
 
 export type UserDocument = HydratedDocument<IUser>
 
-export type CreateUserResponseDto = Partial<IUser> | null
+export const CreateUserResponseDto = Type.Object(
+    {
+        id: Type.String(),
+        username: Type.String(),
+        email: Type.String({format: 'email'}),
+        userGroup: Type.Optional(Type.Optional(Type.Union([
+            Type.Literal('superadmin'),
+            Type.Literal('admin'),
+            Type.Literal('customer'),
+        ]))),
+        jobTitle: Type.Optional(Type.String()),
+        firstName: Type.Optional(Type.String()),
+        lastName: Type.Optional(Type.String()),
+    }
+)
+
+export type CreateUserResponseDto = Static<typeof CreateUserResponseDto>
 
 export const GetUserQueryString = Type.Object({
-    username: Type.Optional(Type.String({minLength: 1}))
+    username: Type.Optional(Type.String({ minLength: 1 })),
 })
-
 
 export type GetUserQueryString = Static<typeof GetUserQueryString>
 
-
 export const UpdateUserRequestDto = Type.Object({
-    username: Type.String(),
-    email: Type.String({format: 'email'}),
-    jobTitle: Type.String({}),
-    firstName: Type.String({}),
-    lastName: Type.String({}),
+    username: Type.Optional(Type.String()),
+    email: Type.Optional(Type.String({ format: 'email' })),
+    jobTitle: Type.Optional(Type.String()),
+    firstName: Type.Optional(Type.String()),
+    lastName: Type.Optional(Type.String()),
 })
 
 export type UpdateUserRequestDto = Static<typeof UpdateUserRequestDto>
 
 export const UpdateUserParams = Type.Object({
-    id: Type.String()
+    id: Type.String(),
 })
 
 export type UpdateUserParams = Static<typeof UpdateUserParams>

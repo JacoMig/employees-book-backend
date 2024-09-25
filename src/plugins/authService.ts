@@ -4,6 +4,7 @@ import authRepository from '../modules/auth/authRepository'
 import { createAuthService } from '../modules/auth/authService'
 import { FastifyAuthFunction } from '@fastify/auth'
 import { UserGroup } from '../userSchema'
+import { AuthUser } from '../common/dtos'
 
 export interface IAuthService {
     login: (usernameOrEmail: string, password: string) =>  Promise<{token: string}> 
@@ -13,6 +14,9 @@ export interface IAuthService {
 declare module 'fastify' {
     interface FastifyInstance {
         authService: IAuthService
+    }
+    interface FastifyRequest {
+        authUser: AuthUser
     }
 }
 

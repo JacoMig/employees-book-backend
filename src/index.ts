@@ -11,7 +11,6 @@ export const app = fastify({
 
 app.register(async () => {
     const url = process.env.DB_URL
-    console.log(url)
     if (mongoose.connection.readyState === 0)
         mongoose
             .connect(url!)

@@ -44,7 +44,7 @@ const authService = (server:FastifyInstance, AuthRepository: IAuthRepository) =>
             userGroup: user.userGroup,
             id: user.id
         }
-        const token = server.jwt.sign({ payload, expiresIn: 60 })
+        const token = server.jwt.sign({ payload, expiresIn: '1h' })
 
         return {
             token
@@ -55,14 +55,25 @@ const authService = (server:FastifyInstance, AuthRepository: IAuthRepository) =>
         
         const Bearer = request.headers.authorization
         const token = Bearer?.split('Bearer ')[1]
-        let userGroup = null
-        server.jwt.verify(token!, {maxAge: 60},(err, decoded) => {
+        if(!token)
+            throw new UnauthorizedError('Token missing in Auth headers')
+        
+        
+        server.jwt.verify(token, {maxAge: '1h'},(err, decoded) => {
             if (err) server.log.error(err)
-            server.log.info(`Token verified. Token is ${decoded}`)
-            userGroup = decoded.userGroup
-            if(userGroups.length && !userGroups.includes(userGroup)) 
+            server.log.info(`Token verified!`)
+            const payload = decoded.payload
+            if(userGroups.length && !userGroups.includes(payload.userGroup)) {
                 throw new UnauthorizedError('User is not authorized to perform this action')
+            } 
+            request.authUser = {
+                userGroup: payload.userGroup,
+                id: payload.id,
+                username: payload.username
+            }
         })
+        
+       
         
     }
 

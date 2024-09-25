@@ -1,4 +1,5 @@
-import { BadRequestError, ForbiddenError, InternalServerError } from "../../common/errors"
+import { AuthUser } from "../../common/dtos"
+import { BadRequestError, ForbiddenError, InternalServerError, UnauthorizedError } from "../../common/errors"
 import { UserDocument } from "../../routes/dtos"
 import { IUser, UserGroup, UserType } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
@@ -7,6 +8,27 @@ export type ListCommand = {
     username?: string
 }
 
+export type UpdateCommand = {
+    firstName?: string,
+    lastName?: string,
+    jobTitle?: string,
+    email?: string,
+    username?: string
+}
+
+
+export type CreateUserDto = {
+    id: string,
+    email: string,
+    username: string
+    userGroup?: UserGroup,
+    firstName?: string,
+    lastName?: string,
+    jobTitle?: string,
+}
+
+
+
 const userService = (UserRepository:IUserRepository) => {
     
     const list = async (command: ListCommand) => {
@@ -14,6 +36,7 @@ const userService = (UserRepository:IUserRepository) => {
             username: command.username
         }
         const users = await UserRepository.list(filter) 
+        
         return mapMany(users)
     }
 
@@ -21,53 +44,65 @@ const userService = (UserRepository:IUserRepository) => {
         username: string,
         email: string,
         password: string,
-        userGroup: UserGroup
+        userGroup?: UserGroup
     ) => {
         if (!email || !password)
             throw new BadRequestError('email or password missing')
 
         let user = await UserRepository.findOne(email)
         
-        if (user) throw new ForbiddenError('user already exists')
+        if (user) throw new ForbiddenError('user with the same email already exists')
         
-        let newUser:Partial<UserDocument> | null = null   
+       
         try {
-            newUser = await UserRepository.create(
+            return mapOne(await UserRepository.create(
                 username,
                 email,
                 password,
                 userGroup
-            )
+            ))
+           
+            
+            
         } catch (e) {
             throw new InternalServerError(e as string)
         }
 
-        
-        return mapOne(newUser)
+    }
+
+    const update = async (id: string, command:UpdateCommand, authUser: AuthUser) => {
+        if(authUser.id !== id)
+            throw new UnauthorizedError('you are trying to update a user that is not you')
+        try {
+            await UserRepository.update(id, command)
+        } catch (e) {
+            throw new InternalServerError(e as string)
+        }
+       
     }
 
     const remove = async (id:string) => {
-        try {
-             await UserRepository.delete(id)
-        } catch(e) {
-            throw new InternalServerError(e as string)
-        }
+        await UserRepository.delete(id)
     }
 
     return {
         list,
         create,
+        update,
         delete: remove
     }
 }
 
 
-const mapOne = (user:Partial<UserDocument>) => {
+const mapOne = (user:Partial<UserDocument>):CreateUserDto => {
     return {
-        username: user.username,
+        username: user.username!,
         userGroup: user.userGroup,
-        email: user.email,
-        id: user.id,
+        email: user.email!,
+        id: user.id as string,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        jobTitle: user.jobTitle
     }
 }
 

@@ -1,56 +1,92 @@
-import { FastifyPluginAsync } from "fastify";
-import { CreateUserRequestDto, CreateUserResponseDto, GetUserQueryString, UpdateUserParams, UpdateUserRequestDto, UserDocument } from "./dtos";
-import { UserType } from "../userSchema";
+import { FastifyPluginAsync } from 'fastify'
+import {
+    CreateUserRequestDto,
+    CreateUserResponseDto,
+    GetUserQueryString,
+    UpdateUserParams,
+    UpdateUserRequestDto,
+} from './dtos'
 
-const userRoutes:FastifyPluginAsync = async (server) => {
-    
+
+const userRoutes: FastifyPluginAsync = async (server) => {
     server.get<{ Querystring: GetUserQueryString }>(
         '/',
         {
             schema: {
-              querystring: GetUserQueryString,
+                querystring: GetUserQueryString,
             },
+            preHandler: server.auth([
+                server.authService.authenticate([]),
+            ])
         },
         async (request) => {
             return await server.userService.list(request.query)
         }
     )
-    
-    server.post<{ Body: CreateUserRequestDto; Reply: CreateUserResponseDto }>(
+
+    server.post<{ Body: CreateUserRequestDto }>(
         '/',
-        async (request,response) => {
-            const {username, email, password, userGroup} = request.body
-            response.status(201).send(
-                await server.userService.create(username, email, password, userGroup)
+        {
+            schema: {
+                body: CreateUserRequestDto,
+                response: {
+                    201: CreateUserResponseDto
+                }  
+            }, 
+            preHandler: server.auth([
+                server.authService.authenticate(['superadmin', 'admin']),
+            ]),
+        },
+        async (request, response) => {
+            const { username, email, password, userGroup } = request.body
+            response
+                .status(201)
+                .send(
+                    await server.userService.create(
+                        username,
+                        email,
+                        password,
+                        userGroup
+                    )
+                )
+        }
+    )
+
+    server.patch<{
+        Body: UpdateUserRequestDto
+        Params: UpdateUserParams
+    }>(
+        '/:id',
+        {
+            schema: {
+                body: UpdateUserRequestDto,
+                params: UpdateUserParams,
+            },
+            preHandler: server.auth([
+                server.authService.authenticate([]),
+            ])
+        },
+        async (request) => {
+            return await server.userService.update(
+                request.params.id,
+                request.body,
+                request.authUser
             )
         }
     )
 
-    server.patch<{Body: UpdateUserRequestDto,  Params: UpdateUserParams}>(
-        '/:id', 
-        {
-            schema: {
-                body: UpdateUserRequestDto,
-                params: UpdateUserParams
-            }
-        },
-        async (request) => {
-
-        }
-    )
-
-    server.delete<{ Params: {id: string} }>(
+    server.delete<{ Params: { id: string } }>(
         '/:id',
         {
-        preHandler: server.auth([
-            server.authService.authenticate(['superadmin'])
-        ])
+            preHandler: server.auth([
+                server.authService.authenticate(['superadmin']),
+            ]),
         },
         async (request, response) => {
-            const {id} = request.params
+            const { id } = request.params
             await server.userService.delete(id)
 
-            response.status(204);
+            response.status(204)
         }
     )
 }
