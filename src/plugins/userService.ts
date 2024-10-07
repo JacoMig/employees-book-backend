@@ -12,6 +12,7 @@ import { UserGroup, UserType } from '../userSchema'
 import { AuthUser } from '../common/dtos'
 
 export interface IUserService {
+    get: (id: string) => Promise<Partial<UserDocument>>
     list: (command: ListCommand) => Promise<Partial<UserDocument>[]>
     create: (
         username: string,
@@ -19,12 +20,12 @@ export interface IUserService {
         password: string,
         userGroup?: UserGroup
     ) => Promise<CreateUserDto>
-    delete: (userId: string) => Promise<void>
+    delete: (userId: string) => Promise<{}>
     update: (
         id: string,
         params: UpdateCommand,
         authUser: AuthUser
-    ) => Promise<void>
+    ) => Promise<{}>
 }
 
 declare module 'fastify' {

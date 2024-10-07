@@ -15,19 +15,25 @@ type UpdateParams = {
 }
 
 export interface IUserRepository {
+    findOneById: (id:string) => Promise<UserDocument | null>
     list: (filter: ListFilter) => Promise<UserDocument[]>
     findOne: (usernameOrEmail: string) => Promise<UserDocument | null>
     create: (
         username: string,
         email: string,
         password: string,
-        userGroup?: UserGroup
+        userGroup?: UserGroup,
     ) => Promise<IUser>
     update: (id: string, params: UpdateParams) => Promise<UserDocument | null>
     delete: (id: string) => Promise<void>
 }
 
 function userRepository(): IUserRepository {
+    const findOneById = async (id:string) => {
+        return await UserModel.findOne({
+            _id: id,
+        })
+    }
     const list = async (query: ListFilter) => {
        
         let filter: RootFilterQuery<IUser> = {}
@@ -44,7 +50,7 @@ function userRepository(): IUserRepository {
         return await UserModel.find(filter)
     }
 
-    const findOne = async (usernameOrEmail: string) => {
+    const findOne = async (usernameOrEmail: string, id?:string) => {
         return await UserModel.findOne({
             $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
         })
@@ -54,13 +60,14 @@ function userRepository(): IUserRepository {
         username: string,
         email: string,
         password: string,
-        userGroup?: UserGroup
+        userGroup?: UserGroup,
+        
     ) => {
         return await new UserModel({
             username,
             email,
             password,
-            userGroup
+            userGroup,
         }).save()
     }
 
@@ -73,6 +80,7 @@ function userRepository(): IUserRepository {
     }
 
     return {
+        findOneById,
         list,
         findOne,
         create,

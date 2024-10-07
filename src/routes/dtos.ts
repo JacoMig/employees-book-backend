@@ -75,3 +75,16 @@ export const UpdateUserParams = Type.Object({
 })
 
 export type UpdateUserParams = Static<typeof UpdateUserParams>
+
+
+export const DeleteParamsDto = Type.Object({
+    id: Type.String()
+})
+export type DeleteParamsDto = Static<typeof DeleteParamsDto>
+
+
+export const DeleteResponseDto = Type.Object({})
+export type DeleteResponseDto = Static<typeof DeleteResponseDto>
+
+export const PatchResponseDto = Type.Object({})
+export type PatchResponseDto = Static<typeof PatchResponseDto>

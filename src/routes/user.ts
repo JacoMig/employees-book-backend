@@ -2,13 +2,34 @@ import { FastifyPluginAsync } from 'fastify'
 import {
     CreateUserRequestDto,
     CreateUserResponseDto,
+    DeleteParamsDto,
+    DeleteResponseDto,
     GetUserQueryString,
+    PatchResponseDto,
     UpdateUserParams,
     UpdateUserRequestDto,
 } from './dtos'
 
 
+
 const userRoutes: FastifyPluginAsync = async (server) => {
+    
+    server.get<{ Params: UpdateUserParams }>(
+        '/:id',
+        {
+            schema: {
+                params: UpdateUserParams,
+            },
+            preHandler: server.auth([
+                server.authService.authenticate([]),
+            ])
+        },
+        async (request) => {
+            const {id} = request.params
+            return await server.userService.get(id)
+        }
+    )
+
     server.get<{ Querystring: GetUserQueryString }>(
         '/',
         {
@@ -35,7 +56,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             }, 
             preHandler: server.auth([
                 server.authService.authenticate(['superadmin', 'admin']),
-            ]),
+            ]), 
         },
         async (request, response) => {
             const { username, email, password, userGroup } = request.body
@@ -61,6 +82,9 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             schema: {
                 body: UpdateUserRequestDto,
                 params: UpdateUserParams,
+                response: {
+                    200: PatchResponseDto
+                }
             },
             preHandler: server.auth([
                 server.authService.authenticate([]),
@@ -78,6 +102,12 @@ const userRoutes: FastifyPluginAsync = async (server) => {
     server.delete<{ Params: { id: string } }>(
         '/:id',
         {
+            schema: {
+                params: DeleteParamsDto,
+                response: {
+                    200: DeleteResponseDto
+                }
+            },
             preHandler: server.auth([
                 server.authService.authenticate(['superadmin']),
             ]),
@@ -86,7 +116,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             const { id } = request.params
             await server.userService.delete(id)
 
-            response.status(204)
+            response.status(200).send({})
         }
     )
 }

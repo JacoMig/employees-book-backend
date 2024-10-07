@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import fastify from 'fastify'
-
+import cors from '@fastify/cors'
 
 const HOST = process.env.HOST || '0.0.0.0'
 
@@ -29,6 +29,7 @@ app.register(import('@fastify/jwt'), {
     secret: 'supersecret',
     sign: { algorithm: 'HS256' }
   })
+app.register(cors)
 
 // Run the server!
 app.listen({host: HOST, port: 3000 }, (err) => {

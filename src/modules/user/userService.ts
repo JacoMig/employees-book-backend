@@ -1,5 +1,5 @@
 import { AuthUser } from "../../common/dtos"
-import { BadRequestError, ForbiddenError, InternalServerError, UnauthorizedError } from "../../common/errors"
+import { BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../../common/errors"
 import { UserDocument } from "../../routes/dtos"
 import { IUser, UserGroup, UserType } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
@@ -31,6 +31,14 @@ export type CreateUserDto = {
 
 const userService = (UserRepository:IUserRepository) => {
     
+    const get = async (id:string) => {
+        const user = await UserRepository.findOneById(id) 
+        if(!user)
+            throw new NotFoundError('user not found')
+
+        return mapOne(user)
+    }
+
     const list = async (command: ListCommand) => {
         const filter = {
             username: command.username
@@ -78,14 +86,17 @@ const userService = (UserRepository:IUserRepository) => {
         } catch (e) {
             throw new InternalServerError(e as string)
         }
+        return {}
        
     }
 
     const remove = async (id:string) => {
         await UserRepository.delete(id)
+        return {}
     }
 
     return {
+        get,
         list,
         create,
         update,
