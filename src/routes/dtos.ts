@@ -34,6 +34,12 @@ export const CreateUserRequestDto = Type.Object({
 
 export type CreateUserRequestDto = Static<typeof CreateUserRequestDto>
 
+export const UploadFileReqeustDto = Type.Object({
+    file: Type.Object({})
+})
+
+export type UploadFileReqeustDto = Static<typeof UploadFileReqeustDto>
+
 export type UserDocument = HydratedDocument<IUser>
 
 export const CreateUserResponseDto = Type.Object(

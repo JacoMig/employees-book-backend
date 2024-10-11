@@ -15,6 +15,7 @@ export interface IUser {
     userGroup: UserGroup
     firstName: string
     lastName: string
+    cvUrl: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -59,6 +60,9 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String
     },
     lastName: {
+        type: String
+    },
+    cvUrl: {
         type: String
     }
 })

@@ -1,6 +1,7 @@
-import { IUser, UserGroup, UserModel, UserType } from '../../userSchema'
+import { IUser, UserGroup, UserModel } from '../../userSchema'
 import { UserDocument } from '../../routes/dtos'
 import { RootFilterQuery } from 'mongoose'
+
 
 type ListFilter = {
     username?: string
@@ -69,6 +70,7 @@ function userRepository(): IUserRepository {
             password,
             userGroup,
         }).save()
+
     }
 
     const remove = async (id: string) => {

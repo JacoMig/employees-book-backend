@@ -10,6 +10,8 @@ import fp from 'fastify-plugin'
 import { UserDocument } from '../routes/dtos'
 import { UserGroup, UserType } from '../userSchema'
 import { AuthUser } from '../common/dtos'
+import { createS3Lib } from '../libs/s3'
+
 
 export interface IUserService {
     get: (id: string) => Promise<Partial<UserDocument>>
@@ -36,7 +38,8 @@ declare module 'fastify' {
 
 const userService: FastifyPluginAsync = async (server) => {
     const UserRepository = userRepository()
-    const service = createUserService(UserRepository)
+    const S3Lib = createS3Lib()
+    const service = createUserService(UserRepository, S3Lib)
 
     server.decorate('userService', service)
 }
