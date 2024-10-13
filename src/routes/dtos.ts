@@ -47,11 +47,12 @@ export const CreateUserResponseDto = Type.Object(
         id: Type.String(),
         username: Type.String(),
         email: Type.String({format: 'email'}),
-        userGroup: Type.Optional(Type.Optional(Type.Union([
+        cratedAt: Type.String({format: "date-time"}),
+        userGroup: Type.Optional(Type.Union([
             Type.Literal('superadmin'),
             Type.Literal('admin'),
             Type.Literal('customer'),
-        ]))),
+        ])),
         jobTitle: Type.Optional(Type.String()),
         firstName: Type.Optional(Type.String()),
         lastName: Type.Optional(Type.String()),
@@ -72,6 +73,7 @@ export const UpdateUserRequestDto = Type.Object({
     jobTitle: Type.Optional(Type.String()),
     firstName: Type.Optional(Type.String()),
     lastName: Type.Optional(Type.String()),
+    hiringDate: Type.Optional(Type.String({ format: 'date-time' })),
 })
 
 export type UpdateUserRequestDto = Static<typeof UpdateUserRequestDto>

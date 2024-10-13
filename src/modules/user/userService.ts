@@ -4,7 +4,6 @@ import { createS3Lib, IS3Library } from "../../libs/s3"
 import { UserDocument } from "../../routes/dtos"
 import { IUser, UserGroup, UserType } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
-import S3 from 'aws-sdk/clients/s3'
 
 export type ListCommand = {
     username?: string
@@ -16,6 +15,7 @@ export type UpdateCommand = {
     jobTitle?: string,
     email?: string,
     username?: string
+    hiringDate?: string
 }
 
 
@@ -27,7 +27,9 @@ export type CreateUserDto = {
     firstName?: string,
     lastName?: string,
     jobTitle?: string,
-    cvUrl?: string
+    cvUrl?: string,
+    createdAt?: string,
+    hiringDate?: string
 }
 
 
@@ -64,14 +66,14 @@ const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
         
         if (user) throw new ForbiddenError('user with the same email already exists')
         
-        
         try {
             
             return mapOne(await UserRepository.create(
                 username,
+                new Date().toISOString(),
                 email,
                 password,
-                userGroup
+                userGroup,
             ))
             
         } catch (e) {
@@ -129,7 +131,9 @@ const mapOne = (user:Partial<UserDocument>):CreateUserDto => {
         firstName: user.firstName,
         lastName: user.lastName,
         jobTitle: user.jobTitle,
-        cvUrl: user.cvUrl
+        cvUrl: user.cvUrl,
+        createdAt: user.createdAt || undefined,
+        hiringDate: user.hiringDate
     }
 }
 

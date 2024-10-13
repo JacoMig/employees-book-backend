@@ -16,6 +16,8 @@ export interface IUser {
     firstName: string
     lastName: string
     cvUrl: string
+    createdAt: string
+    hiringDate: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -63,6 +65,13 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String
     },
     cvUrl: {
+        type: String
+    },
+    createdAt: {
+        type: String,
+        required: true
+    },
+    hiringDate: {
         type: String
     }
 })

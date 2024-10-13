@@ -12,7 +12,8 @@ type UpdateParams = {
     lastName?: string,
     jobTitle?: string,
     email?: string,
-    username?: string
+    username?: string,
+    hiringDate?: string
 }
 
 export interface IUserRepository {
@@ -21,6 +22,7 @@ export interface IUserRepository {
     findOne: (usernameOrEmail: string) => Promise<UserDocument | null>
     create: (
         username: string,
+        createdAt: string,
         email: string,
         password: string,
         userGroup?: UserGroup,
@@ -59,6 +61,7 @@ function userRepository(): IUserRepository {
 
     const create = async (
         username: string,
+        createdAt: string,
         email: string,
         password: string,
         userGroup?: UserGroup,
@@ -66,6 +69,7 @@ function userRepository(): IUserRepository {
     ) => {
         return await new UserModel({
             username,
+            createdAt,
             email,
             password,
             userGroup,
