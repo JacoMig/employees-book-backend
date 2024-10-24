@@ -63,6 +63,8 @@ export type CreateUserResponseDto = Static<typeof CreateUserResponseDto>
 
 export const GetUserQueryString = Type.Object({
     username: Type.Optional(Type.String({ minLength: 1 })),
+    limit: Type.Optional(Type.Number()),
+    offset: Type.Optional(Type.Number())
 })
 
 export type GetUserQueryString = Static<typeof GetUserQueryString>
@@ -73,7 +75,8 @@ export const UpdateUserRequestDto = Type.Object({
     jobTitle: Type.Optional(Type.String()),
     firstName: Type.Optional(Type.String()),
     lastName: Type.Optional(Type.String()),
-    hiringDate: Type.Optional(Type.String({ format: 'date-time' })),
+    hiringDate: Type.Optional(Type.String()),
+    profileImage: Type.Optional(Type.String())
 })
 
 export type UpdateUserRequestDto = Static<typeof UpdateUserRequestDto>

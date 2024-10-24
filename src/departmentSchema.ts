@@ -1,12 +1,20 @@
-import mongoose from "mongoose";
-
-type Areas = 'backend' | 'frontend' | 'cloud' | 'rd' | 'analyst' | 'machinelearning'
+import mongoose, { InferSchemaType, model } from "mongoose";
 
 export interface IDepartment {
     name: string,
-    areas: Areas
+    userId: string[]
 }
 
 const departmentSchema = new mongoose.Schema<IDepartment>({
-    
+    name: { 
+        type: String,
+        required: true
+    },    
+    userId: [String]
 })
+
+export type DepartmentType = InferSchemaType<typeof departmentSchema>
+
+const DepartmentModel = model<DepartmentType>('department', departmentSchema)
+
+export { DepartmentModel }

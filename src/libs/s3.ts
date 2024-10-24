@@ -1,5 +1,4 @@
 import S3, { DeleteObjectOutput } from "aws-sdk/clients/s3"
-import { InternalServerError } from "../common/errors";
 import { AWSError } from "aws-sdk";
 
 export type DeleteObject = {

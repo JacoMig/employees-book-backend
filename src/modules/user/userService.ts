@@ -6,7 +6,9 @@ import { IUser, UserGroup, UserType } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
 
 export type ListCommand = {
-    username?: string
+    username?: string,
+    limit?: number,
+    offset?: number
 }
 
 export type UpdateCommand = {
@@ -16,6 +18,7 @@ export type UpdateCommand = {
     email?: string,
     username?: string
     hiringDate?: string
+    profileImage?: string
 }
 
 
@@ -29,9 +32,20 @@ export type CreateUserDto = {
     jobTitle?: string,
     cvUrl?: string,
     createdAt?: string,
-    hiringDate?: string
+    hiringDate?: string,
+    profileImage?: string
 }
 
+
+export type ListResponse = {
+    pagination: {
+        pages: number,
+        currentPage: number,
+        offset: number,
+        total: number
+    },
+    users: Partial<UserDocument>[]
+}
 
 
 const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
@@ -44,13 +58,26 @@ const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
         return mapOne(user)
     }
 
-    const list = async (command: ListCommand) => {
+    const list = async (command: ListCommand):Promise<ListResponse> => {
         const filter = {
-            username: command.username
+            username: command.username,
+            limit: command.limit || 100,
+            offset: command.offset || 0
         }
-        const users = await UserRepository.list(filter) 
-        
-        return mapMany(users)
+        const aggregateUsers = await UserRepository.list(filter) 
+       
+        const totalUsers = aggregateUsers[0].metadata[0]?.totalCount 
+        const pages =  Math.ceil(totalUsers / filter.limit) 
+
+        return {
+            users: mapMany(aggregateUsers[0].data),
+            pagination: {
+                total: totalUsers,
+                pages,
+                offset: filter.offset,
+                currentPage: (filter.offset + 1)
+            }
+        }
     }
 
     const create = async (
@@ -133,7 +160,8 @@ const mapOne = (user:Partial<UserDocument>):CreateUserDto => {
         jobTitle: user.jobTitle,
         cvUrl: user.cvUrl,
         createdAt: user.createdAt || undefined,
-        hiringDate: user.hiringDate
+        hiringDate: user.hiringDate,
+        profileImage: user.profileImage || undefined
     }
 }
 

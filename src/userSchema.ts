@@ -18,6 +18,7 @@ export interface IUser {
     cvUrl: string
     createdAt: string
     hiringDate: string
+    profileImage: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -65,6 +66,9 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String
     },
     cvUrl: {
+        type: String
+    },
+    profileImage: {
         type: String
     },
     createdAt: {

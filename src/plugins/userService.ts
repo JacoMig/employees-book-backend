@@ -4,6 +4,7 @@ import {
     CreateUserDto,
     createUserService,
     ListCommand,
+    ListResponse,
     UpdateCommand,
 } from '../modules/user/userService'
 import fp from 'fastify-plugin'
@@ -15,7 +16,7 @@ import { createS3Lib } from '../libs/s3'
 
 export interface IUserService {
     get: (id: string) => Promise<Partial<UserDocument>>
-    list: (command: ListCommand) => Promise<Partial<UserDocument>[]>
+    list: (command: ListCommand) => Promise<ListResponse>
     create: (
         username: string,
         email: string,
