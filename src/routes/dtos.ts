@@ -76,7 +76,7 @@ export const UpdateUserRequestDto = Type.Object({
     firstName: Type.Optional(Type.String()),
     lastName: Type.Optional(Type.String()),
     hiringDate: Type.Optional(Type.String()),
-    profileImage: Type.Optional(Type.String())
+    // profileImage: Type.Optional(Type.String())
 })
 
 export type UpdateUserRequestDto = Static<typeof UpdateUserRequestDto>

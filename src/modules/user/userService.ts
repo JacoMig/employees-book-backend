@@ -18,7 +18,7 @@ export type UpdateCommand = {
     email?: string,
     username?: string
     hiringDate?: string
-    profileImage?: string
+    // profileImage?: string
 }
 
 

@@ -3,11 +3,11 @@ import { createS3Lib } from "../libs/s3";
 import { createUploadsService } from "../modules/uploads/uploadsService";
 import fp from 'fastify-plugin'
 import { FileCV } from "../common/dtos";
-import uploadsRepository from "../modules/uploads/uploadsRepository";
+import uploadsRepository, { RemoveUploadKey } from "../modules/uploads/uploadsRepository";
 
 interface IUploadsService {
     uploadToS3: (id:string, file:FileCV) => Promise<{}>
-    deleteFromS3: (id:string, filename:string) => Promise<{}>
+    deleteFromS3: (id:string, filename:string, removeKey:RemoveUploadKey) => Promise<{}>
 }
 
 declare module 'fastify' {

@@ -44,10 +44,10 @@ const userSchema = new mongoose.Schema<IUser>({
         max: 16,
         validate: {
             validator: function (v) {
-                return /^(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(v)
+                return /^[a-zA-Z0-9~_&*%@#$]{8,16}$/.test(v)
             },
             message: () =>
-                `Password must have at least one special char, capital letters and numbers`,
+                `Password must have letters, numbers and a special char`,
         },
     },
     jobTitle: {
@@ -86,10 +86,10 @@ userSchema.pre('save', async function (next) {
     this.password = hashedPassword
 
     next()
-})
+}) 
 
 export type UserType = InferSchemaType<typeof userSchema>
 
-const UserModel = model<UserType>('user', userSchema)
+const UserModel = model<UserType>('USER', userSchema)
 
 export { UserModel }

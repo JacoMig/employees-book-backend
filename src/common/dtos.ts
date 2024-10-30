@@ -12,5 +12,6 @@ export type AuthUser = {
 export type FileCV = {
     file: Stream | undefined,
     name?: string,
-    type?: string
+    type?: string,
+    fieldname?: string
 }
