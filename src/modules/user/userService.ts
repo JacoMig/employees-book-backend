@@ -1,8 +1,8 @@
 import { AuthUser } from "../../common/dtos"
 import { BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError } from "../../common/errors"
-import { createS3Lib, IS3Library } from "../../libs/s3"
+import {  IS3Library } from "../../libs/s3"
 import { UserDocument } from "../../routes/dtos"
-import { IUser, UserGroup, UserType } from "../../userSchema"
+import {  UserGroup } from "../../userSchema"
 import { IUserRepository } from "./userRepository"
 
 export type ListCommand = {
@@ -54,7 +54,7 @@ const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
         const user = await UserRepository.findOneById(id) 
         if(!user)
             throw new NotFoundError('user not found')
-
+        
         return mapOne(user)
     }
 
@@ -68,7 +68,7 @@ const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
        
         const totalUsers = aggregateUsers[0].metadata[0]?.totalCount 
         const pages =  Math.ceil(totalUsers / filter.limit) 
-
+      
         return {
             users: mapMany(aggregateUsers[0].data),
             pagination: {
@@ -149,12 +149,13 @@ const userService = (UserRepository:IUserRepository, S3Lib: IS3Library) => {
 }
 
 
-const mapOne = (user:Partial<UserDocument>):CreateUserDto => {
+const mapOne = (user:UserDocument):CreateUserDto => {
+    
     return {
         username: user.username!,
         userGroup: user.userGroup,
         email: user.email!,
-        id: user.id as string,
+        id: user._id.toString(),
         firstName: user.firstName,
         lastName: user.lastName,
         jobTitle: user.jobTitle,
@@ -165,7 +166,7 @@ const mapOne = (user:Partial<UserDocument>):CreateUserDto => {
     }
 }
 
-const mapMany = (users:Partial<UserDocument>[]) => {
+const mapMany = (users:UserDocument[]) => {
     return users.map(u => mapOne(u))
 }
 

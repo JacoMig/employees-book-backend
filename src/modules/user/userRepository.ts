@@ -33,7 +33,7 @@ export interface IUserRepository {
         email: string,
         password: string,
         userGroup?: UserGroup
-    ) => Promise<IUser>
+    ) => Promise<UserDocument>
     update: (id: string, params: UpdateParams) => Promise<UserDocument | null>
     delete: (id: string) => Promise<void>
 }
