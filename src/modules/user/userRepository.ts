@@ -1,8 +1,9 @@
-import { IUser, UserGroup, UserModel } from '../../userSchema'
+import { IUser,  UserModel } from '../../userSchema'
 import { UserDocument } from '../../routes/dtos'
-import { Aggregate, RootFilterQuery } from 'mongoose'
+import {  RootFilterQuery } from 'mongoose'
 
 type ListFilter = {
+    companyId: string
     limit: number
     offset: number
     username?: string
@@ -16,6 +17,8 @@ type UpdateParams = {
     username?: string
     hiringDate?: string
     profileImage?: string
+    companyId?: string
+    companyName?: string
 }
 
 type AggregateUsersResponse = {
@@ -28,12 +31,11 @@ export interface IUserRepository {
     list: (filter: ListFilter) => Promise<AggregateUsersResponse[]>
     findOne: (usernameOrEmail: string) => Promise<UserDocument | null>
     create: (
-        username: string,
-        createdAt: string,
-        email: string,
-        password: string,
-        userGroup?: UserGroup
+        user:Partial<IUser>
     ) => Promise<UserDocument>
+    createMany: (
+        users: IUser[]
+    ) => Promise<UserDocument[]>
     update: (id: string, params: UpdateParams) => Promise<UserDocument | null>
     delete: (id: string) => Promise<void>
 }
@@ -48,7 +50,9 @@ function userRepository(): IUserRepository {
     const list = async (
         query: ListFilter
     ): Promise<AggregateUsersResponse[]> => {
-        let filter: RootFilterQuery<IUser> = {}
+        let filter: RootFilterQuery<IUser> = {
+            companyId: query.companyId
+        }
         if (query.username) {
             const re = new RegExp(query.username, 'i')
             filter = {
@@ -59,7 +63,7 @@ function userRepository(): IUserRepository {
             }
         }
 
-        let skip = query.offset * query.limit
+        const skip = query.offset * query.limit
 
         return await UserModel.aggregate([
             {
@@ -74,26 +78,24 @@ function userRepository(): IUserRepository {
         ])
     }
 
-    const findOne = async (usernameOrEmail: string, id?: string) => {
+    const findOne = async (usernameOrEmail: string) => {
         return await UserModel.findOne({
             $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
         })
     }
 
     const create = async (
-        username: string,
-        createdAt: string,
-        email: string,
-        password: string,
-        userGroup?: UserGroup
+        user:Partial<IUser>
     ) => {
         return await new UserModel({
-            username,
-            createdAt,
-            email,
-            password,
-            userGroup,
+           ...user
         }).save()
+    }
+
+    const createMany = async (
+        users:IUser[]
+    ) => {
+        return await UserModel.insertMany(users)
     }
 
     const remove = async (id: string) => {
@@ -111,6 +113,7 @@ function userRepository(): IUserRepository {
         list,
         findOne,
         create,
+        createMany,
         update,
         delete: remove,
     }

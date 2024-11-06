@@ -1,6 +1,7 @@
 import { HydratedDocument } from 'mongoose'
-import { IUser, UserGroup } from '../userSchema'
+import { IUser } from '../userSchema'
 import { Static, Type } from '@sinclair/typebox'
+import { ICompany } from '../companySchema'
 
 export const ILoginRequestDto = Type.Object({
     usernameOrEmail: Type.String(),
@@ -62,6 +63,7 @@ export const CreateUserResponseDto = Type.Object(
 export type CreateUserResponseDto = Static<typeof CreateUserResponseDto>
 
 export const GetUserQueryString = Type.Object({
+    companyId: Type.String(),
     username: Type.Optional(Type.String({ minLength: 1 })),
     limit: Type.Optional(Type.Number()),
     offset: Type.Optional(Type.Number())
@@ -99,3 +101,6 @@ export type DeleteResponseDto = Static<typeof DeleteResponseDto>
 
 export const PatchResponseDto = Type.Object({})
 export type PatchResponseDto = Static<typeof PatchResponseDto>
+
+
+export type CompanyDocument = HydratedDocument<ICompany>

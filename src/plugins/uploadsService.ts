@@ -6,8 +6,8 @@ import { FileCV } from "../common/dtos";
 import uploadsRepository, { RemoveUploadKey } from "../modules/uploads/uploadsRepository";
 
 interface IUploadsService {
-    uploadToS3: (id:string, file:FileCV) => Promise<{}>
-    deleteFromS3: (id:string, filename:string, removeKey:RemoveUploadKey) => Promise<{}>
+    uploadToS3: (id:string, file:FileCV) => Promise<object>
+    deleteFromS3: (id:string, filename:string, removeKey:RemoveUploadKey) => Promise<object>
 }
 
 declare module 'fastify' {

@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from 'fastify'
+import { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 import authRepository from '../modules/auth/authRepository'
 import { createAuthService } from '../modules/auth/authService'

@@ -1,8 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import {
-    BadRequestError,
     ForbiddenError,
-    InternalServerError,
     NotFoundError,
     UnauthorizedError,
 } from '../../common/errors'
@@ -15,7 +13,7 @@ const authService = (server:FastifyInstance, AuthRepository: IAuthRepository) =>
    
    const login =  async (usernameOrEmail: string, password: string) => {
        
-        let user = await AuthRepository.findOne(usernameOrEmail)
+        const user = await AuthRepository.findOne(usernameOrEmail)
         
         if (!user) {
             throw new NotFoundError('user does not exists!')

@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import userRepository, { IUserRepository } from '../modules/user/userRepository'
+import userRepository from '../modules/user/userRepository'
 import {
     CreateUserDto,
     createUserService,
@@ -9,9 +9,10 @@ import {
 } from '../modules/user/userService'
 import fp from 'fastify-plugin'
 import { UserDocument } from '../routes/dtos'
-import { UserGroup, UserType } from '../userSchema'
+import { IUser, UserGroup } from '../userSchema'
 import { AuthUser } from '../common/dtos'
 import { createS3Lib } from '../libs/s3'
+import companyRepository from '../modules/user/companyRepository'
 
 
 export interface IUserService {
@@ -23,12 +24,13 @@ export interface IUserService {
         password: string,
         userGroup?: UserGroup
     ) => Promise<CreateUserDto>
-    delete: (userId: string) => Promise<{}>
+    createMany: (users:IUser[]) => Promise<{added: number}>
+    delete: (userId: string) => Promise<object>
     update: (
         id: string,
         params: UpdateCommand,
         authUser: AuthUser
-    ) => Promise<{}>
+    ) => Promise<object>
 }
 
 declare module 'fastify' {
@@ -39,8 +41,9 @@ declare module 'fastify' {
 
 const userService: FastifyPluginAsync = async (server) => {
     const UserRepository = userRepository()
+    const CompanyRepository = companyRepository()
     const S3Lib = createS3Lib()
-    const service = createUserService(UserRepository, S3Lib)
+    const service = createUserService(UserRepository, CompanyRepository, S3Lib)
 
     server.decorate('userService', service)
 }

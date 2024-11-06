@@ -19,6 +19,8 @@ export interface IUser {
     createdAt: string
     hiringDate: string
     profileImage: string
+    companyId: string
+    companyName: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -32,7 +34,7 @@ const userSchema = new mongoose.Schema<IUser>({
         unique: true,
         validate: {
             validator: function (v) {
-                return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v)
+                return /^[\w-]+@([\w-])+[\w-]{2,4}$/g.test(v)
             },
             message: (props) => `${props.value} is not a valid email`,
         },
@@ -77,6 +79,12 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     hiringDate: {
         type: String
+    },
+    companyId: {
+        type: String
+    },
+    companyName: {
+        type: String
     }
 })
 
@@ -87,6 +95,20 @@ userSchema.pre('save', async function (next) {
 
     next()
 }) 
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+userSchema.post('save', async function (error, doc, next) {
+    if (error.name === 'MongoServerError' && error.code === 11000) {
+        next(
+            new Error(
+                `A user with the same value ${error.keyValue.name} already exists`
+            )
+        )
+    } else {
+        next(error)
+    }
+})
 
 export type UserType = InferSchemaType<typeof userSchema>
 

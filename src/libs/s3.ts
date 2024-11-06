@@ -1,4 +1,4 @@
-import S3, { DeleteObjectOutput } from "aws-sdk/clients/s3"
+import S3 from "aws-sdk/clients/s3"
 import { AWSError } from "aws-sdk";
 
 export type DeleteObject = {
@@ -40,7 +40,7 @@ const s3Library = () => {
             secretAccessKey: process.env.AWS_SECRET_KEY
         });
         
-        s3.deleteObject(input, function(err:AWSError, response:DeleteObjectOutput) {
+        s3.deleteObject(input, function(err:AWSError) {
             if(err) {
                 throw err
             }

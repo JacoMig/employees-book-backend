@@ -34,7 +34,8 @@ const authRoutes:FastifyPluginAsync = async (server) => {
                     await server.userService.create(
                         username,
                         email,
-                        password
+                        password,
+                        'superadmin'
                     )
                 )
       }

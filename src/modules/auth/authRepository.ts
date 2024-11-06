@@ -1,4 +1,4 @@
-import {  IUser, UserModel, UserType } from '../../userSchema'
+import {  UserModel } from '../../userSchema'
 import { UserDocument } from '../../routes/dtos'
 
 export interface IAuthRepository {
