@@ -15,7 +15,7 @@ export type LoginResponseDto = {
 }
 
 export const CreateUserRequestDto = Type.Object({
-    username: Type.String({ minLength: 1, maxLength: 20 }),
+    username: Type.String({ minLength: 1, maxLength: 16 }),
     email: Type.String({ format: 'email' }),
     password: Type.String({ minLength: 8, maxLength: 16 }),
     userGroup: Type.Optional(

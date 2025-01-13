@@ -46,10 +46,10 @@ const userSchema = new mongoose.Schema<IUser>({
         max: 16,
         validate: {
             validator: function (v) {
-                return /^[a-zA-Z0-9~_&*%@#$]{8,16}$/.test(v)
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~_&*%!?@#$])[A-Za-z\d~_&*%!?@#$]{8,16}$/.test(v)
             },
             message: () =>
-                `Password must have letters, numbers and a special char`,
+                `Password must be 8-16 chars long and must contain letters, numbers, and ~_&*%!?@#$`,
         },
     },
     jobTitle: {
