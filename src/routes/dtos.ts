@@ -14,59 +14,69 @@ export type LoginResponseDto = {
     token: string
 }
 
-export const RegisterRequestDto = Type.Object({
-    username: Type.String({minLength:1, maxLength: 20}),
-    email: Type.String({format: 'email'})
-})
-
-export type RegisterRequestDto = Static<typeof RegisterRequestDto>
-
 export const CreateUserRequestDto = Type.Object({
-    username: Type.String({minLength: 1, maxLength: 20}),
+    username: Type.String({ minLength: 1, maxLength: 20 }),
     email: Type.String({ format: 'email' }),
     password: Type.String({ minLength: 8, maxLength: 16 }),
-    userGroup: Type.Optional(Type.Union([
-        Type.Literal('superadmin'),
-        Type.Literal('admin'),
-        Type.Literal('customer'),
-    ])),
-   
+    userGroup: Type.Optional(
+        Type.Union([
+            Type.Literal('superadmin'),
+            Type.Literal('admin'),
+            Type.Literal('customer'),
+        ])
+    ),
 })
 
 export type CreateUserRequestDto = Static<typeof CreateUserRequestDto>
 
 export const UploadFileReqeustDto = Type.Object({
-    file: Type.Object({})
+    file: Type.Object({}),
 })
 
 export type UploadFileReqeustDto = Static<typeof UploadFileReqeustDto>
 
 export type UserDocument = HydratedDocument<IUser>
 
-export const CreateUserResponseDto = Type.Object(
-    {
-        id: Type.String(),
-        username: Type.String(),
-        email: Type.String({format: 'email'}),
-        cratedAt: Type.String({format: "date-time"}),
-        userGroup: Type.Optional(Type.Union([
+export const CreateUserResponseDto = Type.Object({
+    id: Type.String(),
+    username: Type.String(),
+    email: Type.String({ format: 'email' }),
+    createdAt: Type.String({ format: 'date-time' }),
+    userGroup: Type.Optional(
+        Type.Union([
             Type.Literal('superadmin'),
             Type.Literal('admin'),
             Type.Literal('customer'),
-        ])),
-        jobTitle: Type.Optional(Type.String()),
-        firstName: Type.Optional(Type.String()),
-        lastName: Type.Optional(Type.String()),
-    }
-)
+        ])
+    ),
+    jobTitle: Type.Optional(Type.String()),
+    firstName: Type.Optional(Type.String()),
+    lastName: Type.Optional(Type.String()),
+})
 
 export type CreateUserResponseDto = Static<typeof CreateUserResponseDto>
+
+export const RegisterResponseDto = Type.Intersect([
+    CreateUserResponseDto,
+    Type.Object({
+        token: Type.String(),
+     })
+]) 
+
+export type RegisterResponseDto = Static<typeof RegisterResponseDto>
+
+export const RegisterRequestDto = Type.Object({
+    username: Type.String({ minLength: 1, maxLength: 20 }),
+    email: Type.String({ format: 'email' }),
+})
+
+export type RegisterRequestDto = Static<typeof RegisterRequestDto>
 
 export const GetUserQueryString = Type.Object({
     companyId: Type.String(),
     username: Type.Optional(Type.String({ minLength: 1 })),
     limit: Type.Optional(Type.Number()),
-    offset: Type.Optional(Type.Number())
+    offset: Type.Optional(Type.Number()),
 })
 
 export type GetUserQueryString = Static<typeof GetUserQueryString>
@@ -89,18 +99,15 @@ export const UpdateUserParams = Type.Object({
 
 export type UpdateUserParams = Static<typeof UpdateUserParams>
 
-
 export const DeleteParamsDto = Type.Object({
-    id: Type.String()
+    id: Type.String(),
 })
 export type DeleteParamsDto = Static<typeof DeleteParamsDto>
-
 
 export const DeleteResponseDto = Type.Object({})
 export type DeleteResponseDto = Static<typeof DeleteResponseDto>
 
 export const PatchResponseDto = Type.Object({})
 export type PatchResponseDto = Static<typeof PatchResponseDto>
-
 
 export type CompanyDocument = HydratedDocument<ICompany>

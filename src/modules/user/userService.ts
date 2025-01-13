@@ -41,7 +41,7 @@ export type CreateUserDto = {
     lastName?: string
     jobTitle?: string
     cvUrl?: string
-    createdAt?: string
+    createdAt: string
     hiringDate?: string
     profileImage?: string
     companyName?: string
@@ -117,21 +117,23 @@ const userService = (
                 companyName
             })
 
+            const newUser = await UserRepository.create({
+                username,
+                createdAt: new Date().toISOString(),
+                email,
+                password,
+                companyId: company.id,
+                companyName,
+                userGroup: userGroup || 'customer',
+            })
+
             
            
             return mapOne(
-                await UserRepository.create({
-                    username,
-                    createdAt: new Date().toISOString(),
-                    email,
-                    password,
-                    companyId: company.id,
-                    companyName,
-                    userGroup: userGroup || 'customer',
-                })
+                newUser
             )
         } catch (e) {
-           throw e
+           throw new InternalServerError(e as string)
         }
     }
 
@@ -197,7 +199,7 @@ const mapOne = (user: UserDocument): CreateUserDto => {
         lastName: user.lastName,
         jobTitle: user.jobTitle,
         cvUrl: user.cvUrl,
-        createdAt: user.createdAt || undefined,
+        createdAt: user.createdAt,
         hiringDate: user.hiringDate,
         profileImage: user.profileImage || undefined,
         companyName: user.companyName || undefined,

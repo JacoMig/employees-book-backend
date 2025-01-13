@@ -102,7 +102,7 @@ userSchema.post('save', async function (error, doc, next) {
     if (error.name === 'MongoServerError' && error.code === 11000) {
         next(
             new Error(
-                `A user with the same value ${error.keyValue.name} already exists`
+                `A user with the same value ${Object.values(error.keyValue)[0]} already exists`
             )
         )
     } else {
