@@ -106,14 +106,11 @@ const authService = (
                     'superadmin'
                 )
             } catch(err) {
-                console.log('createUser Error!!!!!!!!!!!!');
                 console.log(err);
+                throw new InternalServerError('User creation failed: '+err as string)
             }
             
-            if (!user || !user.id) {
-                throw new InternalServerError('User creation failed')
-            }
-
+           
             const payload = {
                 username: username,
                 email: email,
