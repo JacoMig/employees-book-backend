@@ -42,7 +42,7 @@ export interface IUserRepository {
 
 function userRepository(): IUserRepository {
    
-    const findOneById = async (id: string) => {
+    const findOneById = async (id: string):Promise<UserDocument | null> => {
         return await UserModel.findOne({
             _id: id,
         })
