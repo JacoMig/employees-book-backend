@@ -9,8 +9,7 @@ const companySchema = new mongoose.Schema<ICompany>({
     name: {
         type: String,
         required: true,
-        unique: true,
-        min: 3,
+        min: 2,
         max: 40,
     },
     email: {
@@ -38,8 +37,8 @@ companySchema.post('save', async function (error, doc, next) {
     } else {
         next(error)
     }
-})
-
+}) 
+   
 export type CompanyType = InferSchemaType<typeof companySchema>
 
 const CompanyModel = model<CompanyType>('company', companySchema)

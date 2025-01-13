@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import {
+    CustomError,
     ForbiddenError,
     InternalServerError,
     NotFoundError,
@@ -106,8 +107,17 @@ const authService = (
                     'superadmin'
                 )
             } catch(err) {
+                const error = err as CustomError
                 console.log(err);
-                throw new InternalServerError('User creation failed: '+err as string)
+
+                switch (error.statusCode) {
+                    case 403:
+                        throw new ForbiddenError(error.message);
+                    case 500:
+                    default:
+                        throw new InternalServerError(err as string);
+                }
+                
             }
             
            
