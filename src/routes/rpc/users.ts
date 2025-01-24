@@ -42,7 +42,7 @@ const usersRoutes:FastifyPluginAsync = async (server) => {
 
             const password = faker.internet.password({
                 length: 12,
-                pattern: /^[a-zA-Z0-9~_&*%@$]+$/,
+                pattern: /^[A-Za-z\d~_&*%!?@#$]+$/,
             })
             const profileImage = faker.image.avatar()
 

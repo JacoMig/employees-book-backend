@@ -1,11 +1,7 @@
 import mongoose, { InferSchemaType, model } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-export type UserGroup = 
-    'superadmin' |
-    'admin' |
-    'customer'
-
+export type UserGroup = 'superadmin' | 'admin' | 'customer'
 
 export interface IUser {
     username: string
@@ -34,7 +30,7 @@ const userSchema = new mongoose.Schema<IUser>({
         unique: true,
         validate: {
             validator: function (v) {
-                return  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
             },
             message: (props) => `${props.value} is not a valid email`,
         },
@@ -42,50 +38,49 @@ const userSchema = new mongoose.Schema<IUser>({
     password: {
         type: String,
         required: true,
-        min: 8,
-        max: 16,
+        min: 1,
         validate: {
             validator: function (v) {
-                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~_&*%!?@#$])[A-Za-z\d~_&*%!?@#$]{8,16}$/.test(v)
+                return /^[A-Za-z\d~_&*%!?@#$]+$/.test(v)
             },
             message: () =>
-                `Password must be 8-16 chars long and must contain letters, numbers, and ~_&*%!?@#$`,
+                `Only uppercase letters, lowercase letters, digits, and the special characters ~_&*%!?@#$ are allowed.`,
         },
     },
     jobTitle: {
-        type: String
+        type: String,
     },
     userGroup: {
         type: String,
-        enum : ['superadmin','admin', 'customer'],
+        enum: ['superadmin', 'admin', 'customer'],
         default: 'customer',
-        required: true
+        required: true,
     },
     firstName: {
-        type: String
+        type: String,
     },
     lastName: {
-        type: String
+        type: String,
     },
     cvUrl: {
-        type: String
+        type: String,
     },
     profileImage: {
-        type: String
+        type: String,
     },
     createdAt: {
         type: String,
-        required: true
+        required: true,
     },
     hiringDate: {
-        type: String
+        type: String,
     },
     companyId: {
-        type: String
+        type: String,
     },
     companyName: {
-        type: String
-    }
+        type: String,
+    },
 })
 
 userSchema.pre('save', async function (next) {
@@ -94,7 +89,7 @@ userSchema.pre('save', async function (next) {
     this.password = hashedPassword
 
     next()
-}) 
+})
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -102,7 +97,9 @@ userSchema.post('save', async function (error, doc, next) {
     if (error.name === 'MongoServerError' && error.code === 11000) {
         next(
             new Error(
-                `A user with the same value ${Object.values(error.keyValue)[0]} already exists`
+                `A user with the same value ${
+                    Object.values(error.keyValue)[0]
+                } already exists`
             )
         )
     } else {
