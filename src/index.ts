@@ -1,9 +1,11 @@
 import mongoose from 'mongoose'
 import fastify from 'fastify'
 import cors from '@fastify/cors'
-
-
-const HOST = process.env.HOST || '0.0.0.0'
+import awsLambdaFastify from '@fastify/aws-lambda'
+import routes from "./routes"
+import uploadsServicePlugin from './plugins/uploadsService'
+import userServicePlugin from './plugins/userService'
+import authServicePlugin from "./plugins/authService"
 
 
 export const app = fastify({
@@ -23,11 +25,11 @@ app.register(async () => {
 
 
 
-app.register(import('./plugins/authService'))
-app.register(import('./plugins/userService'))
-app.register(import('./plugins/uploadsService'))
+app.register(authServicePlugin)
+app.register(userServicePlugin)
+app.register(uploadsServicePlugin)
 app.register(import('@fastify/multipart'))
-app.register(import('./routes'))
+app.register(routes)
 app.register(import('@fastify/jwt'), {
     secret: 'supersecret',
     sign: { algorithm: 'HS256' }
@@ -35,11 +37,4 @@ app.register(import('@fastify/jwt'), {
 app.register(cors)
 
 
-// Run the server!
-app.listen({host: HOST, port: 3000 }, (err) => {
-    if (err) {
-        app.log.error(err)
-        mongoose.connection.close()
-        process.exit(1)
-    }
-})
+export const handler = awsLambdaFastify(app);
