@@ -142,7 +142,7 @@ const userService = (
         command: UpdateCommand,
         authUser: AuthUser
     ) => {
-        if (authUser.id !== id)
+        if (authUser.id !== id && !authUser.userGroup.includes('superadmin'))
             throw new UnauthorizedError(
                 'you are trying to update a user that is not you'
             )
