@@ -16,13 +16,11 @@ export interface IS3Library {
 }
 
 const s3Library = () => {
-    const uploadObject = async (params: S3.Types.PutObjectRequest):Promise<UploadObjectResponse> => {
-        const s3 = new S3({
-            accessKeyId: process.env.AWS_ACCESS_KEY,
-            secretAccessKey: process.env.AWS_SECRET_KEY
-        });
 
-          
+    const s3 = new S3();
+
+    const uploadObject = async (params: S3.Types.PutObjectRequest):Promise<UploadObjectResponse> => {
+       
         const uploadPromise:Promise<UploadObjectResponse> = new Promise((resolve, reject) => {
             s3.upload(params, function(err:Error, response:S3.ManagedUpload.SendData) {
                 if(err) {
@@ -35,11 +33,7 @@ const s3Library = () => {
         return uploadPromise
     }
     const deleteObject = async (input:DeleteObject):Promise<boolean> => {
-        const s3 = new S3({
-            accessKeyId: process.env.AWS_ACCESS_KEY,
-            secretAccessKey: process.env.AWS_SECRET_KEY
-        });
-        
+       
         s3.deleteObject(input, function(err:AWSError) {
             if(err) {
                 throw err

@@ -13,6 +13,7 @@ import { IUser, UserGroup } from '../userSchema'
 import { AuthUser } from '../common/dtos'
 import { createS3Lib } from '../libs/s3'
 import companyRepository from '../modules/user/companyRepository'
+import envVariablesLib from '../libs/envVariables'
 
 
 export interface IUserService {
@@ -43,7 +44,9 @@ const userService: FastifyPluginAsync = async (server) => {
     const UserRepository = userRepository()
     const CompanyRepository = companyRepository()
     const S3Lib = createS3Lib()
-    const service = createUserService(UserRepository, CompanyRepository, S3Lib)
+    const envVarsLibs = await envVariablesLib()
+    const s3Bucket = await envVarsLibs.S3_BUCKET
+    const service = createUserService(UserRepository, CompanyRepository, S3Lib, s3Bucket)
 
     server.decorate('userService', service)
 }

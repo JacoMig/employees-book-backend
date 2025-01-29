@@ -4,6 +4,7 @@ import { createUploadsService } from "../modules/uploads/uploadsService";
 import fp from 'fastify-plugin'
 import { FileCV } from "../common/dtos";
 import uploadsRepository, { RemoveUploadKey } from "../modules/uploads/uploadsRepository";
+import envVariablesLib from "../libs/envVariables";
 
 interface IUploadsService {
     uploadToS3: (id:string, file:FileCV) => Promise<object>
@@ -19,7 +20,9 @@ declare module 'fastify' {
 const uploadsService:FastifyPluginAsync = async (server) => {
     const UploadsRepository = uploadsRepository()
     const S3Lib = createS3Lib()
-    const service = createUploadsService(S3Lib, UploadsRepository)
+    const envVarsLibs = await envVariablesLib()
+    const s3Bucket = envVarsLibs.S3_BUCKET
+    const service = createUploadsService(S3Lib, UploadsRepository, s3Bucket)
     server.decorate('UploadsService', service)
 }
 

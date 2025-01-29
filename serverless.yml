@@ -7,18 +7,21 @@ provider:
   runtime: nodejs20.x
   region: eu-central-1
   role: arn:aws:iam::122610498731:role/s3-fullaccess
-  environment:
-    DB_URL: ${env:DB_URL}
-    S3_BUCKET: ${env:S3_BUCKET}
-    AWS_ACCESS_KEY: ${env:AWS_ACCESS_KEY}
-    AWS_SECRET_KEY: ${env:AWS_SECRET_KEY}
-
-
+  apiGateway:
+    minimumCompressionSize: 1024
+  logs:
+    restApi: true
+  environment: 
+    DB_URL: ${env:DB_URL, ssm:/employee-book-env/DB_URL}
+  
+custom:
+  dotenv:
+    # Load .env only when running offline
+    overwrite: true
+    path: .env  
 
 plugins:
   - serverless-offline
-
-
 
 build:
   esbuild:
@@ -30,7 +33,7 @@ build:
 functions:
   api:
     handler: src/index.handler
-    timeout: 30
+    timeout: 29
     events:
       - http:
           path: /
