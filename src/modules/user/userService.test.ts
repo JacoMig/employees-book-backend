@@ -26,8 +26,8 @@ const mockS3Lib: jest.Mocked<IS3Library> = {
     deleteObject: jest.fn(),
     uploadObject: jest.fn()
 }
-
-const userService = createUserService(mockUserRepository, mockCompanyRepository, mockS3Lib)
+const s3Bucket = "my-bucket"
+const userService = createUserService(mockUserRepository, mockCompanyRepository, mockS3Lib, s3Bucket)
 
 describe('UserService', () => {
     describe('get', () => {
@@ -160,7 +160,7 @@ describe('UserService', () => {
             expect(mockUserRepository.delete).toHaveBeenCalledWith('1')
             expect(mockS3Lib.deleteObject).toHaveBeenCalledWith({
                 Key: '1',
-                Bucket: process.env.S3_BUCKET!,
+                Bucket: s3Bucket,
             })
         })
 
