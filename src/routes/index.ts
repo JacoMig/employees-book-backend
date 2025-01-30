@@ -1,16 +1,14 @@
 import { FastifyPluginAsync } from 'fastify'
+import auth from "./auth"
+import userRoutes from "./user"
+import rpcUploads from "./rpc/uploads"
+import rpcUser from "./rpc/users"
 
 const routes: FastifyPluginAsync = async (server) => {
-    server.register(import('./auth'))
-    server.register(import('./user'), {
-        prefix: '/user',
-    })
-    server.register(import('./rpc/uploads'), {
-        prefix: 'rpc/uploads',
-    })
-    server.register(import('./rpc/users'), {
-        prefix: 'rpc/users',
-    })
+    server.register(auth)
+    server.register(userRoutes, {prefix: "user"})
+    server.register(rpcUploads, {prefix: "rpc/uploads"})
+    server.register(rpcUser, {prefix: "rpc/users"})
 }
 
 export default routes

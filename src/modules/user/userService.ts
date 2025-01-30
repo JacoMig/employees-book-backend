@@ -61,7 +61,8 @@ export type ListResponse = {
 const userService = (
     UserRepository: IUserRepository,
     CompanyRepository: ICompanyRepository,
-    S3Lib: IS3Library
+    S3Lib: IS3Library,
+    s3Bucket: string
 ) => {
     const get = async (id: string) => {
         const user = await UserRepository.findOneById(id)
@@ -142,7 +143,7 @@ const userService = (
         command: UpdateCommand,
         authUser: AuthUser
     ) => {
-        if (authUser.id !== id)
+        if (authUser.id !== id && !authUser.userGroup.includes('superadmin'))
             throw new UnauthorizedError(
                 'you are trying to update a user that is not you'
             )
@@ -162,7 +163,7 @@ const userService = (
             // delete user object from s3
             await S3Lib.deleteObject({
                 Key: id,
-                Bucket: process.env.S3_BUCKET!,
+                Bucket: s3Bucket,
             })
         } catch (e) {
             throw new InternalServerError(e as string)
@@ -214,7 +215,8 @@ const mapMany = (users: UserDocument[]) => {
 export const createUserService = (
     UserRepository: IUserRepository,
     CompanyRepository: ICompanyRepository,
-    S3Lib: IS3Library
+    S3Lib: IS3Library,
+    s3Bucket: string
 ) => {
-    return userService(UserRepository, CompanyRepository, S3Lib)
+    return userService(UserRepository, CompanyRepository, S3Lib, s3Bucket)
 }

@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { CreateUserRequestDto, ILoginRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto } from "./dtos";
 
 const authRoutes:FastifyPluginAsync = async (server) => {
-    server.post<{ Body: ILoginRequestDto; Reply: LoginResponseDto }>(
+    server.post<{ Body: ILoginRequestDto; /* Reply: LoginResponseDto */ }>(
         '/login',
         {
             schema: {
@@ -11,8 +11,8 @@ const authRoutes:FastifyPluginAsync = async (server) => {
         },
         async (request) => {
             const {usernameOrEmail, password} = request.body
-        
-            return server.authService.login(usernameOrEmail, password)
+           
+            return await server.authService.login(usernameOrEmail, password)
             
         }
     )
@@ -29,15 +29,11 @@ const authRoutes:FastifyPluginAsync = async (server) => {
       async (request, response) => {
         const { username, email, password } = request.body
 
-        response
-                .status(201)
-                .send(
-                  await server.authService.register({
-                    username,
-                    email,
-                    password,
-                  })
-                )
+        return await server.authService.register({
+          username,
+          email,
+          password,
+        })
       }
     )
 }

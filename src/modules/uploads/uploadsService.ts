@@ -3,7 +3,7 @@ import { BadRequestError, InternalServerError } from '../../common/errors'
 import { IS3Library } from '../../libs/s3'
 import { IUploadsRepository, RemoveUploadKey } from './uploadsRepository'
 
-const uploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository) => {
+const uploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository, s3Bucket:string) => {
     const uploadToS3 = async (id: string, file: FileCV) => {
         if (!file) throw new BadRequestError('No file sent to the request')
         
@@ -11,7 +11,7 @@ const uploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository) 
 
         const params = {
             Key: `${filename!}`,
-            Bucket: `${process.env.S3_BUCKET!}/${id}`,
+            Bucket: `${s3Bucket}/${id}`,
             Body: file.file,
             ContentType: file.type,
         } 
@@ -30,7 +30,7 @@ const uploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository) 
         
         const params = {
             Key: `${id}/${filename}`,
-            Bucket: process.env.S3_BUCKET!
+            Bucket: s3Bucket
         }
         try {
             await S3Lib.deleteObject(params)
@@ -49,6 +49,6 @@ const uploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository) 
     }
 }
 
-export const createUploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository) => {
-    return uploadsService(S3Lib, UploadsRepository)
+export const createUploadsService = (S3Lib:IS3Library, UploadsRepository:IUploadsRepository, s3Bucket:string) => {
+    return uploadsService(S3Lib, UploadsRepository, s3Bucket)
 }
